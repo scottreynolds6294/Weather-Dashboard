@@ -1,6 +1,7 @@
 header {
     display: flex;
-    background-color: aqua;
+    background-color: navy;
+    color: white;
     align-items: center;
     justify-content: center;
     height: 75px;
@@ -20,3 +21,4 @@ header {
     align-items: center;
     margin-bottom: 25px;
 }
+
