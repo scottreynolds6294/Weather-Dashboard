@@ -7,11 +7,6 @@ header {
     height: 75px;
 }
 
-#search-form{
-   margin-left: 10px;
-   margin-top: 10px;
-   border-bottom: solid black 1px;
-}
 .btn {
     display: flex;
     margin-top: 5px;
@@ -22,17 +17,6 @@ header {
     margin-bottom: 25px;
 }
 
-
-#current-weather{
-    border: solid black 1px;
-    margin-top: 10px;
-}
-
-#icon {
-    width: 50px;
-    height: 50px;
-}
-
 .card-img-top {
     width: 30px;
     height: 30px;
@@ -41,4 +25,20 @@ header {
 .card-body{
     background-color:navy;
     color: white;
+}
+
+#search-form{
+    margin-top: 10px;
+    border-bottom: solid black 1px;
+}
+
+#current-weather{
+    border: solid black 1px;
+    margin-top: 10px;
+    padding: 5px;
+}
+
+#icon {
+    width: 50px;
+    height: 50px;
 }
