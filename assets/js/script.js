@@ -1,6 +1,7 @@
 let searchForm = document.getElementById('search-form');
 let cityInput= document.getElementById('search-input');
 let forecastContainer = document.getElementById('forecast-cards');
+let previousSearchesEl= document.getElementById('previous-searches')
 
 const apiKey ='46545655ce89b1bd6a85891a967497ce';
 const currentWeatherUrl = 'https://api.openweathermap.org/data/2.5/weather';
@@ -99,9 +100,38 @@ async function fetchCurrentWeather(city) {
         });
     }
 
+function saveSearch(city) {
+    let searches = JSON.parse(localStorage.getItem('weatherSearches')) || [];
+    searches.unshift(city);
+    localStorage.setItem('weatherSearches', JSON.stringify(searches));
+    displayPreviousSearches();
+}
+
+function displayPreviousSearches(){
+    previousSearchesEl.innerHTML = '';
+    let searches = JSON.parse(localStorage.getItem('weatherSearches')) || [];
+    searches.forEach(city => {
+        const searchItem = document.createElement('button');
+        searchItem.classList.add('btn', 'btn-outline-secondary', 'previous-search-item');
+        searchItem.textContent = city;
+        searchItem.addEventListener('click', () => {
+             fetchCurrentWeather(city)
+    .then(data => {
+        updateWeatherUI(data);
+    });
+    fetchForecast(city)
+    .then(data => {
+        updateForecastUI(data);
+    });
+
+           
+  });
+        previousSearchesEl.appendChild(searchItem);
+    });
+}
 
 
-function handleSeachFormSubmit(event) {
+function handleSearchFormSubmit(event) {
     event.preventDefault();
     const city = cityInput.value.trim();
     if (city === ''){
@@ -112,6 +142,7 @@ function handleSeachFormSubmit(event) {
     .then(data => {
         console.log('Weather Data', data);
         updateWeatherUI(data);
+        saveSearch(city);
     })
     fetchForecast(city)
     .then(data => {
@@ -122,5 +153,5 @@ function handleSeachFormSubmit(event) {
     cityInput.value = '';
 }
  
-searchForm.addEventListener('submit', handleSeachFormSubmit);
-
+searchForm.addEventListener('submit', handleSearchFormSubmit);
+displayPreviousSearches();
