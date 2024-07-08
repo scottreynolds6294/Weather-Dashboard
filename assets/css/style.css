@@ -22,3 +22,23 @@ header {
     margin-bottom: 25px;
 }
 
+
+#current-weather{
+    border: solid black 1px;
+    margin-top: 10px;
+}
+
+#icon {
+    width: 50px;
+    height: 50px;
+}
+
+.card-img-top {
+    width: 30px;
+    height: 30px;
+}
+
+.card-body{
+    background-color:navy;
+    color: white;
+}
