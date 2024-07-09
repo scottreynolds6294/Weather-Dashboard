@@ -53,7 +53,7 @@ async function fetchCurrentWeather(city) {
     if (windSpeedElement) windSpeedElement.textContent = `Wind Speed: ${data.wind.speed} mph`;
  }
 
- function updateForecastUI(data) {
+function updateForecastUI(data) {
     const forecastContainer = document.getElementById('forecast-cards');
     forecastContainer.innerHTML = '';
 
@@ -62,53 +62,66 @@ async function fetchCurrentWeather(city) {
 
     const dailyForecasts = {};
 
-
-    data.list.forEach(item =>{
+    data.list.forEach(item => {
         const forecastDate = new Date(item.dt * 1000);
         forecastDate.setHours(0, 0, 0, 0);
 
-        if (forecastDate.getTime()<= today.getTime()){
+        if (forecastDate.getTime() <= today.getTime()) {
             return;
         }
-        const dateKey = forecastDate;
 
-        if (!dailyForecasts[dateKey]){
+        const dateKey = forecastDate.toISOString().slice(0, 10);
+
+        if (!dailyForecasts[dateKey]) {
             dailyForecasts[dateKey] = {
                 date: forecastDate,
-                icon: item.weather[0].icon,
-                temp: item.main.temp,
-                humidity: item.main.humidity,
-                windSpeed: item.wind.speed
+                entries: [],
+                highestTemp: -Infinity,
+                highestHumidity: -Infinity,
+                highestWindSpeed: -Infinity,
+                fourthEntryIcon: null
             };
-        } else {
-            if (item.main.temp > dailyForecasts[dateKey].temp) {
-                dailyForecasts[dateKey].temp = item.main.temp;
-            }
-            if (item.main.humidity > dailyForecasts[dateKey].humidity) {
-                dailyForecasts[dateKey].humidity = item.main.humidity;
-            }
-            if (item.wind.speed > dailyForecasts[dateKey].windSpeed) {
-                dailyForecasts[dateKey].windSpeed = item.wind.speed;
-            }
+        }
+
+        dailyForecasts[dateKey].entries.push({
+            icon: item.weather[0].icon,
+            temp: item.main.temp,
+            humidity: item.main.humidity,
+            windSpeed: item.wind.speed
+        });
+
+        if (item.main.temp > dailyForecasts[dateKey].highestTemp) {
+            dailyForecasts[dateKey].highestTemp = item.main.temp;
+        }
+        if (item.main.humidity > dailyForecasts[dateKey].highestHumidity) {
+            dailyForecasts[dateKey].highestHumidity = item.main.humidity;
+        }
+        if (item.wind.speed > dailyForecasts[dateKey].highestWindSpeed) {
+            dailyForecasts[dateKey].highestWindSpeed = item.wind.speed;
+        }
+        if (dailyForecasts[dateKey].entries.length === 4) {
+            dailyForecasts[dateKey].fourthEntryIcon = item.weather[0].icon;
         }
     });
-        Object.values(dailyForecasts).forEach(day=> {
-            const forecastCard = document.createElement('div');
-            forecastCard.classList.add('col');
-            forecastCard.innerHTML = `
-                <div class="card h-100">
-                    <div class="card-body">
-                     <h5 class="card-title">${day.date.toLocaleDateString()}</h5>
-                     <img src="https://openweathermap.org/img/w/${day.icon}.png" alt="Weather Icon" class="card-img-top">
-                     <p class="card-text">Temp: ${day.temp}°F</p>
-                     <p class="card-text">Humidity: ${day.humidity}%</p>
-                     <p class="card-text">Wind: ${day.windSpeed}mph</p>
-                     </div>
+
+    Object.values(dailyForecasts).forEach(day => {
+        const forecastCard = document.createElement('div');
+        forecastCard.classList.add('col');
+        forecastCard.innerHTML = `
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">${day.date.toLocaleDateString()}</h5>
+                    <img src="https://openweathermap.org/img/w/${day.fourthEntryIcon}.png" alt="Weather Icon" class="card-img-top">
+                    <p class="card-text">Temp: ${day.highestTemp}°F</p>
+                    <p class="card-text">Humidity: ${day.highestHumidity}%</p>
+                    <p class="card-text">Wind: ${day.highestWindSpeed}mph</p>
                 </div>
+            </div>
         `;
         forecastContainer.appendChild(forecastCard);
-        });
-    }
+    });
+}
+
 
 function saveSearch(city) {
     let searches = JSON.parse(localStorage.getItem('weatherSearches')) || [];
