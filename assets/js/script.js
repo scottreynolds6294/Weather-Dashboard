@@ -80,6 +80,16 @@ async function fetchCurrentWeather(city) {
                 humidity: item.main.humidity,
                 windSpeed: item.wind.speed
             };
+        } else {
+            if (item.main.temp > dailyForecasts[dateKey].temp) {
+                dailyForecasts[dateKey].temp = item.main.temp;
+            }
+            if (item.main.humidity > dailyForecasts[dateKey].humidity) {
+                dailyForecasts[dateKey].humidity = item.main.humidity;
+            }
+            if (item.wind.speed > dailyForecasts[dateKey].windSpeed) {
+                dailyForecasts[dateKey].windSpeed = item.wind.speed;
+            }
         }
     });
         Object.values(dailyForecasts).forEach(day=> {
@@ -90,9 +100,9 @@ async function fetchCurrentWeather(city) {
                     <div class="card-body">
                      <h5 class="card-title">${day.date.toLocaleDateString()}</h5>
                      <img src="https://openweathermap.org/img/w/${day.icon}.png" alt="Weather Icon" class="card-img-top">
-                     <p class="card-text">Temp: ${day.temp} °F</p>
+                     <p class="card-text">Temp: ${day.temp}°F</p>
                      <p class="card-text">Humidity: ${day.humidity}%</p>
-                     <p class="card-text">Wind: ${day.windSpeed} mph</p>
+                     <p class="card-text">Wind: ${day.windSpeed}mph</p>
                      </div>
                 </div>
         `;
@@ -122,10 +132,10 @@ function displayPreviousSearches(){
     fetchForecast(city)
     .then(data => {
         updateForecastUI(data);
-    });
+    })
 
            
-  });
+        });
         previousSearchesEl.appendChild(searchItem);
     });
 }
